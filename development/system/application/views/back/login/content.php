@@ -42,7 +42,7 @@
 			
 			<h2>What's that?</h2>
 			<p>You don't have access? Poop!</p>
-			<p>Please get in touch with the <a href="<?=ROOTURIPATH?>users/admin/">admin</a>, if you would like to be part of our development team.</p>
+			<p>Please get in touch with the <a href="<?=site_url('users/admin/')?>">admin</a>, if you would like to be part of our development team.</p>
 			
 			<div class="push">
 

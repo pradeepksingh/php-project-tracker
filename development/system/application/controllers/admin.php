@@ -432,7 +432,7 @@ class Admin extends Controller
 		# If we don't have a project name.
 		if ( $this->uri->segment( 3 ) === FALSE )
 		{
-			# Show all changelogs, catagories by project name.
+			# show all projects.
 			$vars['projects'] = $this->project->get_all_projects();
 			$vars['page']	  = 'view_all';
 			
@@ -590,10 +590,93 @@ class Admin extends Controller
 		if ( $this->uri->segment( 3 ) === FALSE )
 		{
 			# Load changelogs.
-			$vars['changelogs'] = $this->project->get_all_changelogs();
+			$vars['projects'] = $this->project->get_all_projects();
+			
 			# Set page.
 			$vars['page'] 		= 'view_all';
+			
 			$this->load->view('loader', $vars);
+		}
+		
+		# Project name has been provided (alias, in fact), project version has NOT 
+		# been given.
+		elseif ( $this->uri->segment( 4 ) === FALSE )
+		{
+			# Check the project exists, via the Project model methods.
+			if ( $this->project->project_exists_by_alias( $this->uri->segment( 3 ) ) === FALSE )
+			{
+				show_error('That project does not exist.');
+			}
+			
+			# Load up the project info and releases for that project.
+			$vars['project']  = $this->project->get_project( $this->uri->segment( 3 ) );
+			$vars['releases'] = $this->project->get_releases_by_project( $vars['project']->project_name );
+			$vars['page']	  = 'view_project';
+			
+			$this->load->view('loader', $vars);
+		}
+		
+		# Project name and release version have been provided.
+		elseif ( $this->uri->segment( 5 ) === FALSE )
+		{
+			# Make sure project exists.
+			if ( $this->project->project_Exists_by_alias( $this->uri->segment( 3 ) ) === FALSE )
+			{
+				show_error('That project does not exist.');
+			}
+			
+			# And the release is valid for the given project.
+			if ( $this->project->release_exists_by_alias( $this->uri->segment( 3 ), 
+														  $this->uri->segment( 4 ) ) === FALSE )
+			{
+				show_error('The given project and release version do not match.');
+			}
+			
+			# Project and release version are OK!
+			# Load proj info and changelogs.
+			$vars['project'] 	= $this->project->get_project( $this->uri->segment( 3 ) );
+			$vars['changelogs'] = $this->project->get_changelogs_by_release( $vars['project']->project_name,
+																			 $this->uri->segment( 4 ) );
+			$vars['page']		= 'view_single';
+			
+			$this->load->view('loader', $vars);
+		}
+		
+		# Everything has been given. Project, release, and log ID.
+		else
+		{
+			# Project exists?
+			if ( $this->project->project_exists_by_alias( $this->uri->segment( 3 ) ) === FALSE  )
+			{
+				show_error("The given project <code>{$this->uri->segment( 3 )}</code> does not exist.");
+			}
+
+			# Release exists?
+			if ( $this->project->release_exists_by_alias( $this->uri->segment( 3 ),
+														  $this->uri->segment( 4 ) ) === FALSE  )
+			{
+				show_error("The given release <code>{$this->uri->segment( 4 )} does not exist.");
+			}
+
+			# Changelog id exists.
+			if ( $this->project->changelog_exists_by_id( $this->uri->segment( 3 ),
+														 $this->uri->segment( 4 ),
+														 $this->uri->segment( 5 ) ) === FALSE )
+			{
+				show_error("The given ID is not valid or does not exist.");
+			}
+			
+			# Build criteria for deletion.
+			$data = 
+				array (	
+					'id' => $this->uri->segment( 5 )
+				);
+				
+			# Delete the changelog :( byebye!
+			$this->project->delete_changelog( $data );
+			
+			# Redirect to the given project and release's deletechangelog page.
+			redirect('admin/deletechangelog/' . $this->uri->segment( 3 ) . '/' . $this->uri->segment( 4 ) );
 		}
 	} 
 	

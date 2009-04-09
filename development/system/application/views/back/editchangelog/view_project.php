@@ -8,8 +8,6 @@
 
 			<h2>Releases</h2>
 
-			<h3>Project: <?=$project->project_name?></h3>
-
 			<?php if ( $project_releases === NULL ) : ?>
 			<p>There are no releases for this project.</p>
 			<p><a href="<?=site_url('admin/newrelease/'.$project->alias)?>">

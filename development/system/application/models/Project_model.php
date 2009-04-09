@@ -380,6 +380,11 @@ class Project_model extends Model
 		$this->db->where('id', $id);
 		$this->db->update('project_changelogs', $data);
 	}
+	public function delete_changelog ( $id )
+	{
+		$this->db->where($id);
+		$this->db->delete('project_changelogs');
+	}
 	
 	/**
 	 * Commits the given information into the projects table.
