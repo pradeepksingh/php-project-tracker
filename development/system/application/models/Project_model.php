@@ -334,14 +334,30 @@ class Project_model extends Model
 		
 	}
 	
-	public function changelog_exists_by_id ( $proj, $release, $id )
+	public function get_changelog_by_id ( $id )
 	{
-		(string) $proj;
-		(string) $release;
-		(int)	 $id;
 		$this->db
 			 ->from('project_changelogs')
-			 ->where('project_name', $proj)
+			 ->where('id', $id)
+			 ->limit(1);
+		$query = $this->db->get();
+		if ( $query->num_rows() < 1 )
+		{
+			return NULL;
+		}
+		else
+		{
+			return $query->row();
+		}
+	}
+	
+	public function changelog_exists_by_id ( $alias, $release, $id )
+	{
+		$project = $this->db->get_where('projects', array('alias' => $alias));
+		$project = $project->row();
+		$this->db
+			 ->from('project_changelogs')
+			 ->where('project_name', $project->project_name)
 			 ->where('project_version', $release)
 			 ->where('id', $id);
 		$query = $this->db->get();
@@ -358,6 +374,11 @@ class Project_model extends Model
 	public function commit_changelog ( $data )
 	{
 		$this->db->insert( 'project_changelogs', $data );
+	}
+	public function update_changelog ( $id, $data )
+	{
+		$this->db->where('id', $id);
+		$this->db->update('project_changelogs', $data);
 	}
 	
 	/**

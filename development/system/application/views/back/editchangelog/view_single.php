@@ -65,7 +65,7 @@
 				<?php foreach ( $changelogs->result() as $changelog ) : ?>
 				<li>
 					<span class="log_title"><?=$changelog->log_title?></span> 
-					(<a href="<?=site_url('admin/editchangelog/'.$project->alias.'/'.$changelog->id)?>">edit</a>)
+					(<a href="<?=site_url('admin/editchangelog/'.$project->alias.'/'.$changelog->project_version.'/'.$changelog->id)?>">edit</a>)
 					<ul>
 						<li class="log_type alt"><?=$changelog->log_type?></li>
 						<li class="log_date"><?=$changelog->log_date?></li>

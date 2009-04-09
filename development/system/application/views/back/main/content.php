@@ -10,10 +10,42 @@
 				
 				<h2>Admin Navigation</h2>
 				
+				<style type="text/css">
+					#content ul li ul {
+						margin-top: 10px;
+						margin-bottom: 10px;
+						margin-left: 10px;
+					}
+					#content ul li ul li a {
+						color: brown;
+						letter-spacing: 0;
+					}
+				</style>
 				<ul>
 				
-					<li><a href="<?=site_url('admin/create/')?>">Create new project</a></li>
-					<li><a href="<?=site_url('admin/newrelease/')?>">Add a new release for an existing project</a></li>
+					<li>
+						<a href="<?=site_url('admin/create/')?>">Create new project</a>
+						<ul>
+							<li><a href="<?=site_url('admin/edit/')?>">Edit Project</a></li>
+							<li><a href="<?=site_url('admin/delete/')?>">Delete Project</a></li>
+						</ul>
+					</li>
+					
+					<li>
+						<a href="<?=site_url('admin/newrelease/')?>">Add a new release for an existing project</a>
+						<ul>
+							<li><a href="<?=site_url('admin/editrelease/')?>">Edit Release</a></li>
+							<li><a href="<?=site_url('admin/deleterelease/')?>">Delete Release</a></li>
+						</ul>
+					</li>
+					
+					<li>
+						<a href="<?=site_url('admin/addchangelog/')?>">Add changelogs for a release</a>
+						<ul>
+							<li><a href="<?=site_url('admin/editchangelog/')?>">Edit Changelog</a></li>
+							<li><a href="<?=site_url('admin/deletechangelog/')?>">Delete Changelog</a></li>
+						</ul>
+					</li>
 				
 				</ul>
 				

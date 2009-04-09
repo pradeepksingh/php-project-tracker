@@ -209,7 +209,9 @@ class Admin extends Controller
 							'rules' => 'required|min_length[1]|callback_newer_version'
 							)
 					);
+				
 				$this->form_validation->set_rules( $rules );
+				
 				if ( $this->form_validation->run() !== TRUE )
 				{
 					# Form validation came back false
@@ -217,6 +219,7 @@ class Admin extends Controller
 					$vars['page'] = 'add_form';
 					$this->load->view( 'loader', $vars );
 				}
+				
 				else
 				{
 					# Form validation was a-ok.
@@ -228,12 +231,14 @@ class Admin extends Controller
 					if ( $_FILES['file']['error'] === 0 )
 					{
 						$upload_path   = str_replace('\\', '/', BASEPATH . 'uploads/' . $_FILES['file']['name']);
+						
 						if ( copy( $_FILES['file']['tmp_name'], $upload_path ) === FALSE )
 						{
 							$vars['file_error'] = "Error.";
 							$vars['page'] 		= 'add_form';
 							$this->load->view( 'loader', $vars );
 						}
+						
 						else
 						{
 							# File uploaded. Let's archive.
@@ -241,16 +246,21 @@ class Admin extends Controller
 							$file_path = $upload_path . "/" . $_FILES['file']['name'];
 							$arc_path  = $upload_path . "/zip/" . $_FILES['file']['name'] . ".zip";
 							$this->load->library( 'zip' );
+							
 							# Read the uploaded file into a string for ZIP lib.
 							$this->zip->read_file( $file_path );
+							
 							# And archive it.
 							$this->zip->archive( $arc_path );
+							
 							# Now we have the archive done, let's do the database work.
 							# Do we have to update the has_release flag?
 							if ( (bool) $vars['project']->has_release === FALSE )
 							{
 								$this->project->set_has_release( TRUE, $this->uri->segment( 3 ) );
 							}
+							
+							# Set the data to be passed to the commit_new_release() method.
 							$data = 
 								array (
 									'project_name' 		=> $this->input->post( 'project_name' ),
@@ -259,7 +269,11 @@ class Admin extends Controller
 									'project_version' 	=> $this->input->post( 'project_version' ),
 									'project_download' 	=> $arc_path
 								);
+							
+							# Run the commit.
 							$this->project->commit_new_release( $data );
+							
+							# Set misc vars.
 							$vars['page'] 				= "release_added";
 							$vars['release_version'] 	= $this->input->post( 'project_version' );
 							$vars['project_name']		= $this->input->post( 'project_name' );
@@ -269,12 +283,14 @@ class Admin extends Controller
 							$this->load->view('loader', $vars);
 						}
 					}	
+					
 					else
 					{
 						die( "No File Uploaded" );
 					}			
 				}
 			}
+			
 			else
 			{
 				$this->load->view('loader', $vars);
@@ -284,8 +300,6 @@ class Admin extends Controller
 
 	public function edit()
 	{
-		$x = "lol/lol";
-		explode("/", $x);
 	}
 	
 	/* Changelog stuff. */
@@ -432,7 +446,6 @@ class Admin extends Controller
 			if ( $this->project->project_exists_by_alias( $this->uri->segment( 3 ) ) === FALSE )
 			{
 				show_error("The given project <code>{$this->uri->segment( 3 )}</code> does not exist.");
-				return;
 			}
 			
 			# Load view with project info.
@@ -446,64 +459,122 @@ class Admin extends Controller
 		# We have project name, project release, but no changelog ID.
 		elseif ( $this->uri->segment( 5 ) === FALSE )
 		{
-			
 			# Project exists?
 			if ( $this->project->project_exists_by_alias( $this->uri->segment( 3 ) ) === FALSE  )
 			{
 				show_error("The given project <code>{$this->uri->segment( 3 )}</code> does not exist.");
-				return;
 			}
+			
 			# Release exists?
 			if ( $this->project->release_exists_by_alias( $this->uri->segment( 3 ),
 														  $this->uri->segment( 4 ) ) === FALSE  )
 			{
 				show_error("The given release <code>{$this->uri->segment( 4 )} does not exist.");
-				return;
 			}
 			
+			# Project name and release number are valid.
+			# Set the project and changelog vars.
 			$vars['project'] 	= $this->project->get_project( $this->uri->segment( 3 ) );
 			$vars['changelogs'] = $this->project->get_changelogs_by_release( $vars['project']->project_name,
 																			 $this->uri->segment( 4 ) );
 			$vars['page']		= 'view_single';
-			$this->load->view('loader', $vars);
 			
+			# Load the page with the variables available to it.
+			$this->load->view('loader', $vars);
 		}
 		
 		# All information has been given.
 		else
 		{
-			
 			# Project exists?
 			if ( $this->project->project_exists_by_alias( $this->uri->segment( 3 ) ) === FALSE  )
 			{
 				show_error("The given project <code>{$this->uri->segment( 3 )}</code> does not exist.");
-				return;
 			}
+			
 			# Release exists?
 			if ( $this->project->release_exists_by_alias( $this->uri->segment( 3 ),
 														  $this->uri->segment( 4 ) ) === FALSE  )
 			{
 				show_error("The given release <code>{$this->uri->segment( 4 )} does not exist.");
-				return;
 			}
+			
 			# Changelog id exists.
 			if ( $this->project->changelog_exists_by_id( $this->uri->segment( 3 ),
 														 $this->uri->segment( 4 ),
 														 $this->uri->segment( 5 ) ) === FALSE )
 			{
 				show_error("The given ID is not valid or does not exist.");
-				return;
 			}
 			
 			# Load up the front end with form for editing.
-			if ( $this->input->post('submit_edit') === FALSE )
+			if ( $this->input->post('update') === FALSE )
 			{
-			
+				# Set the needed information.
 				$vars['project']   = $this->project->get_project( $this->uri->segment( 3 ) );
 				$vars['changelog'] = $this->project->get_changelog_by_id( $this->uri->segment( 5 ) );
 				$vars['page']	   = 'edit_form';
-				$this->load->view('loader', $vars);
 				
+				# Load page with variables injected.
+				$this->load->view('loader', $vars);
+			}
+			
+			# We've got some POST data to work with and update the changelog with.
+			else
+			{
+				# Set up some validation rules. All fields are required,
+				# and cannot be less than 1 char.
+				$rules =
+					array (	
+						array (
+							'field' => 'title',
+							'label' => 'Changelog Title',
+							'rules' => 'required|min_length[1]'
+						),
+						array (	
+							'field' => 'type',
+							'label' => 'Changelog Type',
+							'rules' => 'required|min_length[1]'
+						),
+						array (
+							'field' => 'desc',
+							'label' => 'Changelog Description',
+							'rules' => 'required|min_length[1]'
+						)
+					);
+				
+				# Let the validation class know the rules.
+				$this->form_validation->set_rules($rules);
+				
+				# Run the validator. 
+				# Form doesn't validate.
+				if ( $this->form_validation->run() === FALSE )
+				{
+					$vars['page'] = 'edit_form';
+					$this->load->view('loader', $vars);
+				}
+				
+				# Form validated successfully.
+				else
+				{
+					# Build array of data we intend to pass to our Project model
+					# so it can UPDATE the relevant changelog.
+					$data =
+						array (
+							'log_type'  => $this->input->post('type'),
+							'log_title' => $this->input->post('title'),
+							'log_desc'  => $this->input->post('desc')
+						);
+						
+					# Call the update_changelog(id, data) method.
+					$this->project->update_changelog( $this->uri->segment( 5 ), $data );
+					
+					# Load success page.
+					$vars['page'] 		= 'success';
+					$vars['red_to'] 	= site_url('admin');
+					$vars['red_time'] 	= 5;
+					$this->load->view('loader', $vars);
+				}
 			}
 			
 		}

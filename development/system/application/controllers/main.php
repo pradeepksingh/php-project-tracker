@@ -19,6 +19,9 @@ class Main extends Controller
 	function Main()
 	{
 		parent::Controller();
+		
+		//
+		$this->output->enable_profiler(TRUE);
 	}
 	
 	/**
@@ -38,11 +41,6 @@ class Main extends Controller
 	
 	public function view()
 	{
-		
-		sleep( 25 );
-		$data = array('db_x' => "it work?");
-		$this->db->insert('db_test', $data);
-		
 	}
 	
 	public function download()
