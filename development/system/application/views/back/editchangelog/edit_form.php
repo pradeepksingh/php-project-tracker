@@ -3,7 +3,7 @@
 		<div id="content">
 			
 			<h1>Editing Changelog</h1>
-			
+		
 			<p>Use the form below to edit the changelog for release <code><?=$changelog->project_version?></code> of
 			<?=$project->project_name?></p>
 			
