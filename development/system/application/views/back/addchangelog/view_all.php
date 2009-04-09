@@ -65,7 +65,7 @@
 					
 					<ul class="changelog"> 
 					
-					<?php if ( $project['has_release'] ) : 2
+					<?php if ( $project['has_release'] ) : 
 						$releases = $this->project->get_releases_by_project( $project['project_name'] );
 						foreach ( $releases->result_array() as $key => $release ) :
 					?>

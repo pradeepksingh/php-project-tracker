@@ -12,8 +12,8 @@
 				
 				<ul>
 				
-					<li><a href="<?=ROOTURIPATH?>admin/create/">Create new project</a></li>
-					<li><a href="<?=ROOTURIPATH?>admin/newrelease/">Add a new release for an existing project</a></li>
+					<li><a href="<?=site_url('admin/create/')?>">Create new project</a></li>
+					<li><a href="<?=site_url('admin/newrelease/')?>">Add a new release for an existing project</a></li>
 				
 				</ul>
 				

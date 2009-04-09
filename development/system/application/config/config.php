@@ -11,10 +11,7 @@
 |	http://www.your-site.com/
 |
 */
-$config['base_url']	= "http://localhost/development/";
-/*
-| added by mark
-*/
+$config['base_url']	= "http://localhost/php-project-tracker/development/";
 
 /*
 |--------------------------------------------------------------------------

@@ -203,23 +203,6 @@
 		<div id="header">
 			<h1>Mahcuz.com</h1>
 				<p>
-                		<a href="<?=ROOTURIPATH?>">&raquo; Development</a>
-                        <?php 
-							$x = ucfirst($this->uri->segment(1));
-							if ( $x != "" )
-							{
-								echo " <a href='".ROOTURIPATH."admin'>&raquo; {$x}</a>";
-							}
-							$x = ucfirst($this->uri->segment(2));
-							if ( $x != "" ) 
-							{
-								echo " &raquo; {$x}"; 
-							}
-							$x = $this->uri->segment(3);
-							if ( $x != "" )
-							{
-								echo " &raquo; {$x}";
-							}
-						?>
+                		<a href="<?=site_url('')?>">&raquo; Development</a>
               	</p>
 		</div>

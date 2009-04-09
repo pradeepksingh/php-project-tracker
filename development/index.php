@@ -95,9 +95,6 @@ define('EXT', '.'.pathinfo(__FILE__, PATHINFO_EXTENSION));
 define('FCPATH', __FILE__);
 define('SELF', pathinfo(__FILE__, PATHINFO_BASENAME));
 define('BASEPATH', $system_folder.'/');
-define('ROOTPATH', "c:/lhost/");
-define('DEVPATH', "http://localhost/development/" );
-define('ROOTURIPATH', 'http://localhost/development/index.php/');
 
 if (is_dir($application_folder))
 {
