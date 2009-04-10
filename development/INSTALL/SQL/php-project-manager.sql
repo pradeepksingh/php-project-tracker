@@ -3,11 +3,17 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Mar 26, 2009 at 07:44 PM
+-- Generation Time: Apr 10, 2009 at 01:30 PM
 -- Server version: 5.1.30
 -- PHP Version: 5.2.8
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
 
 --
 -- Database: `mahcuz`
@@ -27,14 +33,7 @@ CREATE TABLE IF NOT EXISTS `projects` (
   `alias` varchar(200) NOT NULL,
   `has_release` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT AUTO_INCREMENT=2 ;
-
---
--- Dumping data for table `projects`
---
-
-INSERT INTO `projects` (`id`, `project_name`, `project_author`, `project_desc`, `alias`, `has_release`) VALUES
-(1, 'Test 1', 'admin', 'Testing 1 Description', 'test-1', 0);
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT AUTO_INCREMENT=10 ;
 
 -- --------------------------------------------------------
 
@@ -43,20 +42,15 @@ INSERT INTO `projects` (`id`, `project_name`, `project_author`, `project_desc`, 
 --
 
 CREATE TABLE IF NOT EXISTS `project_changelogs` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `project_name` varchar(100) NOT NULL,
   `project_version` varchar(6) NOT NULL,
-  `log_type` varchar(20) NOT NULL,
+  `log_type` enum('bug','performance','security') NOT NULL,
   `log_title` varchar(200) NOT NULL,
   `log_desc` varchar(600) NOT NULL DEFAULT '',
-  `log_date` date NOT NULL,
+  `log_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `project_changelogs`
---
-
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=33 ;
 
 -- --------------------------------------------------------
 
@@ -65,19 +59,14 @@ CREATE TABLE IF NOT EXISTS `project_changelogs` (
 --
 
 CREATE TABLE IF NOT EXISTS `project_releases` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `project_name` varchar(100) NOT NULL,
   `project_author` varchar(50) NOT NULL,
-  `project_version` varchar(4) NOT NULL,
+  `project_version` varchar(20) NOT NULL,
   `project_stage` varchar(70) NOT NULL,
   `project_download` varchar(400) NOT NULL DEFAULT '#',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
-
---
--- Dumping data for table `project_releases`
---
-
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT AUTO_INCREMENT=16 ;
 
 -- --------------------------------------------------------
 
@@ -92,10 +81,3 @@ CREATE TABLE IF NOT EXISTS `project_users` (
   `access_level` int(2) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT AUTO_INCREMENT=2 ;
-
---
--- Dumping data for table `project_users`
---
-
-INSERT INTO `project_users` (`id`, `username`, `password`, `access_level`) VALUES
-(1, 'admin', 'letmein', 4);
