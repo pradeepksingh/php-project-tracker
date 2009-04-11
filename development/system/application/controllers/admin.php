@@ -51,6 +51,10 @@ class Admin extends Controller
 			if ( session_exists( 'access_level', 4, 'session' ) === FALSE 
 					&& $this->uri->segment( 2 ) != 'login' )
 			{
+				# Add a session so we can redirect users to where they came from
+				# before being required to log in.
+				# This is the current URL.
+				$this->session->set_userdata('return_url', current_url());
 				redirect('admin/login/');
 			}	
 			else
@@ -149,6 +153,113 @@ class Admin extends Controller
 		}
 	}
 	
+	public function edit()
+	{
+		$vars['module'] = 'edit';
+		$vars['area']	= $this->_area;
+		$vars['page']	= 'view_all';
+		
+		# No project name is given.
+		if ( $this->uri->segment( 3 ) === FALSE )
+		{
+			# Load all projects into variable for use in view.
+			$vars['projects'] = $this->project->get_all_projects();
+			# Load the view, passing the data in param 2.
+			$this->load->view('loader', $vars);
+		}
+		
+		# Project name is given.
+		else
+		{
+			# Check the project exists.
+			if ( $this->project->project_exists_by_alias( $this->uri->segment( 3 ) ) === FALSE )
+			{
+				# Throw error.
+				show_error('That project does not exist.');
+			}
+			
+			# Load the project info.
+			$vars['project'] = $this->project->get_project( $this->uri->segment( 3 ) );
+			
+			# Has the form been submitted?
+			if ( $this->input->post('update') !== FALSE )
+			{
+				# Set some validation rules.
+				$rules = 
+					array ( 
+						array (
+							'field' => 'project_name',
+							'label' => 'Project Name',
+							'rules' => 'trim|required|min_length[1]|max_length[40]|callback_project_exists[true]'
+						),
+						array (
+							'field' => 'project_author',
+							'label' => 'Project Author',
+							'rules' => 'trim|required|min_length[1]|max_length[40]|alpha|callback_username_exists[true]'
+						),
+						array (
+							'field' => 'project_desc',
+							'label' => 'Project Description',
+							'rules' => 'trim|required|min_length[1]'
+						)
+					);
+				# Set the validation rules.
+				$this->form_validation->set_rules( $rules );
+				
+				# Run the validation. If it returns false ...
+				if ( $this->form_validation->run() === FALSE )
+				{
+					# Reload the edit page. 
+					# The edit page will detect the errors and show them.
+					$vars['page'] = 'edit_form';
+					$this->load->view('loader', $vars);
+					return;
+				}
+				
+				# Validation went smoothly.		
+				else
+				{
+					# Now, because we're allowing the changing of the project name.,
+					# if it has been changed (via the form), we also need to update
+					# the project names for the changelogs and the releases.
+					# To avoid changing the names when they don't need to be, we'll
+					# compare the names.
+					if ( $this->input->post('project_name') !== $vars['project']->project_name )
+					{
+						# It needs to be updated.
+						$this->project->update_all_project_names( $vars['project']->project_name, 
+																  $this->input->post('project_name' ) );
+					}
+					
+					# Build data for update.
+					$alias = strtolower( str_replace( ' ', '-', $this->input->post('project_name') ) );
+					$data = 
+						array (	
+							'project_name' 	 => $this->input->post('project_name'),
+							'project_author' => $this->input->post('project_author'),
+							'project_desc' 	 => $this->input->post('project_desc'),
+							'alias' 		 => $alias
+						);
+					
+					# Run the update.
+					$this->project->update_project( $vars['project']->project_name, $data );
+					
+					# Project update is done. 
+					# Set page var, etc.
+					$vars['page'] 	  = 'success';
+					$vars['red_to']   = site_url('admin');
+					$vars['red_time'] = 3;
+					$this->load->view('loader', $vars);	
+					return;
+				}			
+				
+			}
+			# Set page to the edit form.
+			$vars['page'] 	 = 'edit_form';
+			$this->load->view('loader', $vars);
+		}
+	}
+	
 	public function newrelease()
 	{	
 		$vars['module'] = "newrelease";
@@ -241,10 +352,11 @@ class Admin extends Controller
 						
 						else
 						{
+							# TODO: Tidy the file upload, and zip stuff up.
 							# File uploaded. Let's archive.
 							$this->load->library('zip');
 							$file_path = $upload_path . "/" . $_FILES['file']['name'];
-							$arc_path  = $upload_path . "/zip/" . $_FILES['file']['name'] . ".zip";
+							$arc_path  = BASEPATH . "uploads/zip/" . $_FILES['file']['name'] . ".zip";
 							$this->load->library( 'zip' );
 							
 							# Read the uploaded file into a string for ZIP lib.
@@ -296,10 +408,6 @@ class Admin extends Controller
 				$this->load->view('loader', $vars);
 			}
 		}
-	}
-
-	public function edit()
-	{
 	}
 	
 	/* Changelog stuff. */
@@ -726,8 +834,8 @@ class Admin extends Controller
 				$this->session->set_userdata( $userdata );
 				# Set misc variables.
 				$vars['page'] = "loggedin.php";
-				$vars['red_to'] = site_url('admin/');
-				$vars['red_time'] = 5;
+				$vars['red_to'] = $this->session->userdata('return_url');
+				$vars['red_time'] = 3;
 				$this->load->view( 'loader', $vars );
 			}
 			else

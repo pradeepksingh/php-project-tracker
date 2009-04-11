@@ -42,13 +42,10 @@
 					<?php endif; ?>
 				 	
 				 	<p>Please remember that this is for creating <b>new projects</b> - not for adding new <b>project releases</b>. To add a project release, go <a href="../new-release/">here</a>. If you try to create a project that already exists, it will fail. If you intentionally want to overwrite the project, delete it first, and then create the new project.</p>
-					<form enctype="multipart/form-data" action="<?=$_SERVER['PHP_SELF']?>" method="post" style="padding-left: 50px">
+					<form action="<?=current_url()?>" method="post" style="padding-left: 50px">
 					
 					<table>
 						<tr>
-						<tr>
-							<td colspan="2"><h2 class="bl">Details...</h2>
-						</tr>
 							<td>Project Name:</td>
 							<td><input type="text" name="project_name" value="<?=set_value('project_name')?>"/></td>
 						</tr>

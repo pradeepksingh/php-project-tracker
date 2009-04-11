@@ -121,6 +121,46 @@ class Project_model extends Model
 		}
 	}
 	
+	/**
+	 * This function will find all releases and changelogs with the
+	 * given project name and then update them to reflect the new name.
+	 */
+	public function update_all_project_names ( $proj, $new )
+	{
+		# Load the releases.
+		$releases = $this->get_releases_by_project( $proj );
+		
+		# Releases were found.
+		if ( $releases !== NULL )
+		{
+			# We don't need this variable anymore.
+			unset( $releases );
+			
+			# Set our database stuff.
+			$this->db->where('project_name', $proj);
+			$data = array ( 'project_name' => $new );
+			
+			# Run update.
+			$this->db->update('project_releases', $data);
+		}
+		
+		# We do the same for changelogs.
+		$changelogs = $this->get_changelogs_by_project( $proj );
+		
+		# Changelogs were found.
+		if ( $changelogs !== NULL )
+		{
+			unset( $changelogs );
+			
+			# Database stuff.
+			$this->db->where('project_name', $proj);
+			$data = array ( 'project_name' => $new );
+			
+			# Run update.
+			$this->db->update('project_changelogs', $data);
+		}
+	}
+	
 	public function get_project_by_alias ( $alias )
 	{
 		return $this->get_project( $alias );
@@ -313,6 +353,22 @@ class Project_model extends Model
 		}
 	}
 	
+	public function get_changelogs_by_project ( $proj )
+	{
+		$this->db	
+			 ->from('project_changelogs')
+			 ->where('project_name', $proj);
+		$query = $this->db->get();
+		if ( $query->num_rows() < 1 )
+		{
+			return NULL;
+		}
+		else
+		{
+			return $query;
+		}
+	}
+	
 	public function get_changelogs_by_release ( $proj, $release )
 	{
 		(string) $proj;
@@ -371,6 +427,11 @@ class Project_model extends Model
 		}
 	}
 	
+	public function update_project ( $proj, $data )
+	{
+		$this->db->where('project_name', $proj);
+		$this->db->update('projects', $data);
+	}	
 	public function commit_changelog ( $data )
 	{
 		$this->db->insert( 'project_changelogs', $data );

@@ -55,7 +55,7 @@
 			
 			<?php if ( $changelogs === NULL ) : ?>
 			<p>No changelogs can be found for this release.</p>
-			<p><a href="<?=site_url('admin/addchangelog/'.$project->alias)?>">Add them</a> now.</p>
+			<p><a href="<?=site_url('admin/addchangelog/'.$project->alias.'/'.$this->uri->segment( 4 ))?>">Add them</a> now.</p>
 			
 			
 			

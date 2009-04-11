@@ -84,24 +84,6 @@
                         <?php endif; ?>
                     </li>
                 </ul>
-                
-                <h2>Change Log</h2>
-                <?php if ( $project_log !== NULL ) : ?>
-                <ul class="changelog">
-                    <?php foreach ( $project_log->result() as $log ) : ?>
-                    <ul class="log_item">
-                        <li class="log_title"><?=$log->changelog?></li>
-                        <li class="log_type"><?=$log->type?></li>
-                        <li class="date"><?=$log->date?></li>
-                        <li class="log_desc"><?=$log->changelog_description?></li>
-                    </ul>
-                    <?php endforeach; ?>
-                </ul>
-                <?php else : ?>
-                <ul>
-                    <li>No change log to display for current release.</li>
-                </ul>
-                <?php endif; ?>
                  
                         
                         <div class="push">
