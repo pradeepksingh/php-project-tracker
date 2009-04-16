@@ -18,8 +18,8 @@ class Admin extends Controller
 	/**
 	 * Properties.
 	 */
-	private 	$_area 		= 'back';		# Used for loading view for correct section.
-	 
+	private 	$_area 		= 'back';	# Used for loading view for correct section.
+	
 	/**
 	 * @access public
 	 */
@@ -44,7 +44,6 @@ class Admin extends Controller
 		
 		# Profiling - DEBUGGING ONLY
 			$this->output->enable_profiler( TRUE );
-			
 		
 		# check with user_auth that user is an admin.
 		# basically compares param 1 against param 2, in the 3rd param.
@@ -92,11 +91,6 @@ class Admin extends Controller
 		# Was the form submitted?
 		if( $this->input->post( 'submit_project' ) !== FALSE )
 		{
-			#echo '<pre>';
-			#print_r($_FILES);
-			#print_r($_POST);
-			#echo '</pre>';
-			
 			# Let's create some validation rules, using the 
 			# form validation class.
 			$rules = 
@@ -260,7 +254,48 @@ class Admin extends Controller
 		}
 	}
 	
-	public function newrelease()
+	public function delete ( )
+	{
+		$vars['module'] = 'delete';
+		$vars['area']	= $this->_area;
+		$vars['page']	= 'view_all';
+		
+		# No project given.
+		if ( $this->uri->segment( 3 ) === FALSE )
+		{
+			# Load every project.
+			$vars['projects'] = $this->project->get_all_projects();
+			# Load view.
+			$this->load->view('loader', $vars);
+			# Break.
+			return;
+		}
+		
+		# Project given. 
+		# Check that the given project exists.
+		if ( $this->project->project_exists_by_alias( $this->uri->segment( 3 ) ) === FALSE )
+		{
+			# Throw error.
+			show_error('That project does not exist.');
+			# No need to return here.
+		}
+		
+		$project = $this->project->get_project( $this->uri->segment( 3 ) );
+		
+		# We need to remove all releases and changelogs associated with this project.
+		$this->project->delete_associated_changelogs( $project->project_name );
+		# Do the same for releases.
+		$this->project->delete_associated_releases( $project->project_name );
+		# And then finally remove the project from the projects table.
+		$this->project->delete_project( $project->project_name );
+		
+		# Load 'project deleted' view.
+		$vars['page'] = 'success';
+		
+		$this->load->view('loader', $vars);
+	}
+	
+	public function newrelease( )
 	{	
 		$vars['module'] = "newrelease";
 		$vars['area'] 	= $this->_area;
@@ -341,7 +376,8 @@ class Admin extends Controller
 					# Check files exist.
 					if ( $_FILES['file']['error'] === 0 )
 					{
-						$upload_path   = str_replace('\\', '/', BASEPATH . 'uploads/' . $_FILES['file']['name']);
+						$rand = rand();
+						$upload_path   = str_replace('\\', '/', BASEPATH . 'uploads/' . $rand . $_FILES['file']['name']);
 						
 						if ( copy( $_FILES['file']['tmp_name'], $upload_path ) === FALSE )
 						{
@@ -408,6 +444,11 @@ class Admin extends Controller
 				$this->load->view('loader', $vars);
 			}
 		}
+	}
+	
+	public function editrelease ( )
+	{
+		# code...
 	}
 	
 	/* Changelog stuff. */

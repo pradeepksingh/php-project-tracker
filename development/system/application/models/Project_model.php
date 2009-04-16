@@ -191,6 +191,15 @@ class Project_model extends Model
 		}
 	}
 	
+	/**
+	 * Deletes the given project.
+	 */
+	public function delete_project ( $proj )
+	{
+		$this->db->where('project_name', $proj);
+		$this->db->delete('projects');
+	}
+	
 	public function get_releases_by_project ( $proj_name )
 	{
 		$this->db
@@ -279,6 +288,15 @@ class Project_model extends Model
 		{
 			return TRUE;
 		}
+	}
+	
+	/**
+	 * Deletes all the releases with the given project name.
+	 */
+	public function delete_associated_releases ( $proj )
+	{
+		$this->db->where('project_name', $proj);
+		$this->db->delete('project_releases');
 	}
 	
 	public function get_project_changelog ( $project )
@@ -425,6 +443,15 @@ class Project_model extends Model
 		{
 			return TRUE;
 		}
+	}
+	
+	/**
+	 * Deletes all changelogs with the given project name.
+	 */
+	public function delete_associated_changelogs ( $proj )
+	{
+		$this->db->where('project_name', $proj);
+		$this->db->delete('project_changelogs');
 	}
 	
 	public function update_project ( $proj, $data )

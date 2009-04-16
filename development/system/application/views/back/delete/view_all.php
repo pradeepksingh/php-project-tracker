@@ -1,0 +1,28 @@
+
+
+		<div id="content">
+			
+			<h1>Viewing All Projects</h1>
+			
+			<p>Please select from the list below which project you wish to delete.</p>
+			
+			<h2>Projects</h2>
+			
+			<?php if ( $projects === NULL ) : ?>
+			<p>No projects to show.</p>
+			<p><a href="<?=site_url('admin/create')?>">Create one</a> now.</p>
+			
+			<?php else : ?>
+			<ul>
+				<?php foreach ( $projects->result() as $project ) : ?>
+				<li><a href="<?=site_url('admin/delete/'.$project->alias)?>"><?=$project->project_name?></a></li>
+				<?php endforeach; ?>
+			</ul>
+			
+			<?php endif; ?>
+			
+			<div class="push">
+				
+			</div>
+			
+		</div>

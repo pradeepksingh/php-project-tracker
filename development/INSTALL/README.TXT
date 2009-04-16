@@ -46,6 +46,7 @@ INSTALlATION GUIDE.
 
 8. 	Create your administration user data - this will be used for logging in and viewing the admin
 	back-end. You may grant other users access by setting up accounts for them, too.
+	Remember to give the account an access level of 4.
 	
 9.	Done. You should now be able to go ahead and start publishing your projects!
 
