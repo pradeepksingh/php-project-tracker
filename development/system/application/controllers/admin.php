@@ -448,7 +448,39 @@ class Admin extends Controller
 	
 	public function editrelease ( )
 	{
-		# code...
+		$vars['module'] = 'editrelease';
+		$vars['area']   = $this->_area;
+		
+		# If we have no project given.
+		if ( $this->uri->segment( 3 ) === FALSE )
+		{
+			# Grab all projects.
+			$vars['projects'] = $this->project->get_all_projects();
+			$vars['page']	  = 'view_all';
+			
+			# Load the view.
+			$this->load->view('loader', $vars);
+			
+			# Break out
+			return;
+		}
+		
+		# We have a project name, but no release ver.
+		if ( $this->uri->segment( 4 ) === FALSE )
+		{
+			# Check that the given project exists.
+			if ( $this->project->project_exists_by_alias( $this->uri->segment( 3 ) ) === FALSE )
+			{
+				show_error('That project does not exist.');
+			}
+			
+			# Create variables containing project information.
+			$vars['project'] = $this->project->get_project( $this->uri->segment( 3 ) );
+			$vars['page']	 = 'view_project';
+			
+			# Load view.
+			$this->load->view('loader', $vars);
+		}
 	}
 	
 	/* Changelog stuff. */
@@ -461,7 +493,7 @@ class Admin extends Controller
 		# Is there a project given?
 		if ( $this->uri->segment( 3 ) === FALSE )
 		{
-			# Get all projects and their releases.
+			# Get all projects.
 			$vars['projects'] = $this->project->get_all_projects();
 			$vars['page']	  = 'view_all';
 			$this->load->view('loader', $vars);
