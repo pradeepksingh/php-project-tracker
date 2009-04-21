@@ -13,7 +13,7 @@
 
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>mahcuz.com - development</title>
-	<script src="/development/js/jquery-1.3.2.min.js" type="text/javascript"></script>
+	<script src="/php-project-tracker/development/js/jquery-1.3.2.min.js" type="text/javascript"></script>
 	
 	<style type="text/css">
 	* {

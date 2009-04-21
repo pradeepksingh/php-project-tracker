@@ -1,24 +1,18 @@
-<?php
+<?php if ( ! DEFINED('BASEPATH') ) die ('No direct script access allowed.');
 
 
-/**
- * This file will handle all the backend operations
- * that occurr in the development area.
- * These operations will include:
- * - creating new projects,
- * - deleting projects,
- * - updating projects,
- * etc.
- *
- * TODO: change all error-deriven redirect() calls, to show_error( $error ).
- */
  
+/**
+ * Admin
+ * 
+ * @package 	PHP Project Tracker
+ * @author 		Mark Skilbeck
+ * @copyright 	2009, Mahcuz.com, Inc.
+ * @version 	0.0.1
+ * @access 		public
+ */
 class Admin extends Controller
 {
-	/**
-	 * Properties.
-	 */
-	private 	$_area 		= 'back';	# Used for loading view for correct section.
 	
 	/**
 	 * @access public
@@ -68,11 +62,9 @@ class Admin extends Controller
 	 */
 	public function index()
 	{
-		$vars = 
-			array (
-				'area' 		=> $this->_area,
-				'module'	=> 'main'
-				);
+		$vars['area']   = 'back';
+		$vars['module'] = 'main';
+		
 		$this->load->view('loader', $vars);
 	}
 	
@@ -82,11 +74,8 @@ class Admin extends Controller
 	 */
 	public function create()
 	{
-		$vars = 
-			array (
-				'area'		=> $this->_area,
-				'module' 	=> __FUNCTION__
-				);
+		$vars['area']   = 'back';
+		$vars['module'] = 'create';
 		
 		# Was the form submitted?
 		if( $this->input->post( 'submit_project' ) !== FALSE )
@@ -98,7 +87,7 @@ class Admin extends Controller
 						array (
 							'field' => 'project_name', # POST key.
 							'label' => 'Project Name', # Human form.
-							'rules' => 'trim|required|min_length[1]|max_length[40]|callback_project_exists[true]' # Rules - no comma.
+							'rules' => 'trim|required|min_length[1]|max_length[40]|callback_project_exists[true]'
 							),
 						array (
 							'field' => 'project_author',
@@ -111,10 +100,9 @@ class Admin extends Controller
 							'rules' => 'trim|required|min_length[1]'
 							)
 						);
+			
 			$this->form_validation->set_rules( $rules );
-			# Set a custom error message, to better describe what we want from 'project_stage'.
-			$this->form_validation->set_message('integer', 
-												'Please use the format <code>1.0.4</code> for your <strong>Project Version</strong>.' );
+			
 			# Run the validation, if evaluates for FALSE, return errors.
 			if ( $this->form_validation->run() === FALSE )
 			{
@@ -135,8 +123,10 @@ class Admin extends Controller
 				# Using Active Record, CI will sort the data for us, cleaning it
 				# etc.
 				$this->project->commit_new_project( $data );
+				
 				$vars['page'] = "done.php";
 				$vars['new_release_link'] = "admin/newrelease/{$alias}";
+				
 				$this->load->view( 'loader.php', $vars );
 			}
 		}
@@ -149,8 +139,8 @@ class Admin extends Controller
 	
 	public function edit()
 	{
+		$vars['area']	= 'back';
 		$vars['module'] = 'edit';
-		$vars['area']	= $this->_area;
 		$vars['page']	= 'view_all';
 		
 		# No project name is given.
@@ -256,8 +246,8 @@ class Admin extends Controller
 	
 	public function delete ( )
 	{
+		$vars['area']	= 'back';
 		$vars['module'] = 'delete';
-		$vars['area']	= $this->_area;
 		$vars['page']	= 'view_all';
 		
 		# No project given.
@@ -297,8 +287,8 @@ class Admin extends Controller
 	
 	public function newrelease( )
 	{	
-		$vars['module'] = "newrelease";
-		$vars['area'] 	= $this->_area;
+		$vars['area'] 	= 'back';
+		$vars['module'] = 'newrelease';
 		$vars['page'] 	= 'add_form';
 		
 		if ( $this->uri->segment( 3 ) === FALSE )
@@ -448,8 +438,8 @@ class Admin extends Controller
 	
 	public function editrelease ( )
 	{
+		$vars['area']   = 'back';
 		$vars['module'] = 'editrelease';
-		$vars['area']   = $this->_area;
 		
 		# If we have no project given.
 		if ( $this->uri->segment( 3 ) === FALSE )
@@ -487,8 +477,8 @@ class Admin extends Controller
 	
 	public function addchangelog ( ) 
 	{
+		$vars['area']   = 'back';
 		$vars['module'] = 'addchangelog';
-		$vars['area']   = $this->_area;
 		
 		# Is there a project given?
 		if ( $this->uri->segment( 3 ) === FALSE )
@@ -606,9 +596,8 @@ class Admin extends Controller
 	
 	public function editchangelog ( )
 	{
-		
+		$vars['area']	= 'back';
 		$vars['module'] = 'editchangelog';
-		$vars['area']	= $this->_area;
 		
 		# If we don't have a project name.
 		if ( $this->uri->segment( 3 ) === FALSE )
@@ -764,8 +753,8 @@ class Admin extends Controller
 	
 	public function deletechangelog ( )
 	{
+		$vars['area']   = 'back';
 		$vars['module'] = 'deletechangelog';
-		$vars['area']   = $this->_area;
 
 		# Do we have a project given?
 		if ( $this->uri->segment( 3 ) === FALSE )
@@ -871,11 +860,8 @@ class Admin extends Controller
 	
 	public function login()
 	{
-		$vars = 
-			array (
-				'area' => $this->_area,
-				'module' => __FUNCTION__
-				);
+		$vars['area']   = 'back';
+		$vars['module'] = 'login';
 				
 		# Was the forum submitted?
 		if( $this->input->post('log_in') !== FALSE )

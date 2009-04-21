@@ -3,19 +3,18 @@
 class Project_model extends Model 
 {
 	
-	/**
-	 * Properties
-	 */
-	private $_project;
 	
 	function Project_model()
 	{
 		parent::Model();
 	}
 	
+	
 	/**
-	 * Does as the label suggests - checks if the project exists.
-	 * Returns: boolean.
+	 * Project_model::project_exists()
+	 * 
+	 * @param  string $proj_name
+	 * @return bool
 	 */
 	public function project_exists ( $proj_name )
 	{
@@ -39,6 +38,13 @@ class Project_model extends Model
 			}
 		}
 	}
+	
+	/**
+	 * Project_model::project_exists_by_alias()
+	 * 
+	 * @param  string $alias
+	 * @return bool
+	 */
 	public function project_exists_by_alias ( $alias )
 	{
 		if ( $alias !== NULL )
@@ -59,28 +65,18 @@ class Project_model extends Model
 		}
 	}
 	
-	public function test ()
-	{
-		$this->db
-			 ->from('db_test');
-		die($query->num_rows());
-	}
-	
 	/**
-	 * Grabs all information from 'projects' table.
-	 * Does NOT return things like download hits, download path, etc.
-	 * If there are no projects, NULL is the return value.
+	 * Project_model::get_all_projects()
+	 * 
+	 * @return obj, or null
 	 */
 	public function get_all_projects ( )
 	{
-		// We omit the 'select' method, because if it's not present
-		// CI assumes we want to select everything - which we do. :)
 		$this->db
 			 ->from( 'projects' );
 		$query = $this->db->get();
 		if ( $query->num_rows() < 1 )
 		{
-			// If we have no results, return NULL.
 			return NULL;
 		}
 		else
@@ -89,16 +85,11 @@ class Project_model extends Model
 		}
 	}
 	
-	public function get_all_projects_info ( )
-	{
-		
-	}
-	
 	/**
-	 * Grabs data for ONE project.
-	 * The project ALIAS is expected.
-	 * Does NOT return things like download hits, download path, etc.
-	 * If there is no matching project, NULL is returned.
+	 * Project_model::get_project()
+	 * 
+	 * @param  string $alias
+	 * @return obj, or null
 	 */
 	public function get_project ( $alias )
 	{
@@ -121,9 +112,13 @@ class Project_model extends Model
 		}
 	}
 	
+	
 	/**
-	 * This function will find all releases and changelogs with the
-	 * given project name and then update them to reflect the new name.
+	 * Project_model::update_all_project_names()
+	 * 
+	 * @param  string $proj
+	 * @param  string $new
+	 * @return void
 	 */
 	public function update_all_project_names ( $proj, $new )
 	{
@@ -161,14 +156,23 @@ class Project_model extends Model
 		}
 	}
 	
+	/**
+	 * Project_model::get_project_by_alias()
+	 * 
+	 * @param  string $alias
+	 * @return Project::get_project()
+	 */
 	public function get_project_by_alias ( $alias )
 	{
 		return $this->get_project( $alias );
 	}
 	
+	
 	/**
-	 * Grabs LATEST info for ONE project.
-	 * Returns: project name, version ...
+	 * Project_model::get_latest_project_info()
+	 * 
+	 * @param  string $proj_name
+	 * @return obj, or null
 	 */
 	public function get_latest_project_info ( $proj_name )
 	{
@@ -191,8 +195,12 @@ class Project_model extends Model
 		}
 	}
 	
+	
 	/**
-	 * Deletes the given project.
+	 * Project_model::delete_project()
+	 * 
+	 * @param  string $proj
+	 * @return void
 	 */
 	public function delete_project ( $proj )
 	{
@@ -200,6 +208,12 @@ class Project_model extends Model
 		$this->db->delete('projects');
 	}
 	
+	/**
+	 * Project_model::get_releases_by_project()
+	 * 
+	 * @param  string $proj_name
+	 * @return obj, or null
+	 */
 	public function get_releases_by_project ( $proj_name )
 	{
 		$this->db
@@ -216,6 +230,13 @@ class Project_model extends Model
 			return $query;
 		}
 	}
+	
+	/**
+	 * Project_model::get_releases_by_alias()
+	 * 
+	 * @param  string $alias
+	 * @return obj, or null
+	 */
 	public function get_releases_by_alias ( $alias )
 	{
 		$this->db
@@ -233,6 +254,13 @@ class Project_model extends Model
 		}
 	}
 	
+	/**
+	 * Project_model::get_all_releases()
+	 * 
+	 * Marked for deletion.
+	 * 
+	 * @return
+	 */
 	public function get_all_releases ()
 	{
 		$data = array();
@@ -272,6 +300,13 @@ class Project_model extends Model
 		}
 	}
 	
+	/**
+	 * Project_model::release_exists_by_alias()
+	 * 
+	 * @param  string $alias
+	 * @param  string $release
+	 * @return bool
+	 */
 	public function release_exists_by_alias ( $alias, $release )
 	{
 		$proj = $this->get_project_by_alias( $alias );
@@ -290,8 +325,12 @@ class Project_model extends Model
 		}
 	}
 	
+	
 	/**
-	 * Deletes all the releases with the given project name.
+	 * Project_model::delete_associated_releases()
+	 * 
+	 * @param  string $proj
+	 * @return void
 	 */
 	public function delete_associated_releases ( $proj )
 	{
@@ -305,7 +344,11 @@ class Project_model extends Model
 	}
 	
 	/**
-	 * Returns the LATEST changelog for given project.
+	 * Project_model::get_latest_changelog()
+	 * 
+	 * @param  string $project
+	 * @param  string $version
+	 * @return obj, or null
 	 */
 	public function get_latest_changelog ( $project, $version )
 	{
@@ -324,14 +367,18 @@ class Project_model extends Model
 			}
 			else
 			{
-				// Return as resource. 
-				// Because this could hold more than one row,
-				// we need to traverse it through a loop.
 				return $query;
 			}
 		}
 	}
 	
+	/**
+	 * Project_model::get_all_changelogs()
+	 * 
+	 * Marked for deletion.
+	 * 
+	 * @return
+	 */
 	public function get_all_changelogs ( )
 	{
 	
@@ -371,6 +418,12 @@ class Project_model extends Model
 		}
 	}
 	
+	/**
+	 * Project_model::get_changelogs_by_project()
+	 * 
+	 * @param  string $proj
+	 * @return obj, or null
+	 */
 	public function get_changelogs_by_project ( $proj )
 	{
 		$this->db	
@@ -387,6 +440,13 @@ class Project_model extends Model
 		}
 	}
 	
+	/**
+	 * Project_model::get_changelogs_by_release()
+	 * 
+	 * @param  string $proj
+	 * @param  string $release
+	 * @return obj, or null
+	 */
 	public function get_changelogs_by_release ( $proj, $release )
 	{
 		(string) $proj;
@@ -408,6 +468,12 @@ class Project_model extends Model
 		
 	}
 	
+	/**
+	 * Project_model::get_changelog_by_id()
+	 * 
+	 * @param  int $id
+	 * @return obj, or null
+	 */
 	public function get_changelog_by_id ( $id )
 	{
 		$this->db
@@ -425,6 +491,14 @@ class Project_model extends Model
 		}
 	}
 	
+	/**
+	 * Project_model::changelog_exists_by_id()
+	 * 
+	 * @param  string $alias
+	 * @param  string $release
+	 * @param  int    $id
+	 * @return bool
+	 */
 	public function changelog_exists_by_id ( $alias, $release, $id )
 	{
 		$project = $this->db->get_where('projects', array('alias' => $alias));
@@ -446,7 +520,10 @@ class Project_model extends Model
 	}
 	
 	/**
-	 * Deletes all changelogs with the given project name.
+	 * Project_model::delete_associated_changelogs()
+	 * 
+	 * @param  string $proj
+	 * @return void
 	 */
 	public function delete_associated_changelogs ( $proj )
 	{
@@ -454,20 +531,49 @@ class Project_model extends Model
 		$this->db->delete('project_changelogs');
 	}
 	
-	public function update_project ( $proj, $data )
+	/**
+	 * Project_model::update_project()
+	 * 
+	 * @param  string $proj
+	 * @param  array  $data
+	 * @return void
+	 */
+	public function update_project ( $proj, array $data )
 	{
 		$this->db->where('project_name', $proj);
 		$this->db->update('projects', $data);
 	}	
+	
+	/**
+	 * Project_model::commit_changelog()
+	 * 
+	 * @param  array $data
+	 * @return void
+	 */
 	public function commit_changelog ( $data )
 	{
 		$this->db->insert( 'project_changelogs', $data );
 	}
-	public function update_changelog ( $id, $data )
+	
+	/**
+	 * Project_model::update_changelog()
+	 * 
+	 * @param  int   $id
+	 * @param  array $data
+	 * @return void
+	 */
+	public function update_changelog ( $id, array $data )
 	{
 		$this->db->where('id', $id);
 		$this->db->update('project_changelogs', $data);
 	}
+	
+	/**
+	 * Project_model::delete_changelog()
+	 * 
+	 * @param  int $id
+	 * @return void
+	 */
 	public function delete_changelog ( $id )
 	{
 		$this->db->where($id);
@@ -475,18 +581,34 @@ class Project_model extends Model
 	}
 	
 	/**
-	 * Commits the given information into the projects table.
+	 * Project_model::commit_new_project()
+	 * 
+	 * @param  array $data
+	 * @return void
 	 */
-	public function commit_new_project ( $data )
+	public function commit_new_project ( array $data )
 	{
 		$this->db->insert( 'projects', $data );
 	}
 	
-	public function commit_new_release ( $data )
+	/**
+	 * Project_model::commit_new_release()
+	 * 
+	 * @param  array $data
+	 * @return void
+	 */
+	public function commit_new_release ( array $data )
 	{
 		$this->db->insert( 'project_releases', $data );
 	}
 	
+	/**
+	 * Project_model::set_has_release()
+	 * 
+	 * @param  bool   $has_release
+	 * @param  string $alias
+	 * @return void
+	 */
 	public function set_has_release ( $has_release, $alias )
 	{
 		$data = array( 'has_release' => (int) $has_release );
